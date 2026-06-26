@@ -9,7 +9,7 @@ from strategies.registry import list_strategies
 from rich import print_json
 import json
 
-app = typer.Typer(name="dsc", help="Decoding Strategy Comparator")
+app = typer.Typer(name="EntropyLens", help="EntropyLens")
 config = load_config()
 
 def _ensure_model_loaded(model_name: str):

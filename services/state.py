@@ -13,5 +13,4 @@ class ModelState:
     def is_loaded(self) -> bool:
         return self.model is not None
 
-# singleton used across CLI + API
 model_state = ModelState()

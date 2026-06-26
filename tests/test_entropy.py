@@ -7,7 +7,7 @@ def test_uniform_distribution_has_max_entropy():
     scores = (uniform_logits,) * 5
     entropies = token_entropies(scores)
     assert len(entropies) == 5
-    # all values should be close to log(vocab_size) ≈ 4.60
+    # Values should be close to log(100) 100 being the vocab size 
     for H in entropies:
         assert abs(H - 4.605) < 0.01
 

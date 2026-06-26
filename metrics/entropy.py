@@ -2,14 +2,9 @@ import torch
 import torch.nn.functional as F
 
 def token_entropies(scores: tuple) -> list[float]:
-    """
-    scores: tuple of tensors, length = num_generated_tokens
-    each tensor shape: (batch=1, vocab_size)
-    returns: list of per-token entropy values (nats)
-    """
     entropies = []
     for logits in scores:
-        logits = logits[0]  # remove batch dim → (vocab_size,)
+        logits = logits[0]  # removing batch dimensions 
         probs = F.softmax(logits, dim=-1)
         # clamp to avoid log(0)
         probs = torch.clamp(probs, min=1e-10)

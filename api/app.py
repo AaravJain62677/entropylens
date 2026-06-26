@@ -4,8 +4,8 @@ from services.state import model_state
 from services.comparator import run_comparison
 from utils.loader import load_config
 
-app = FastAPI(title="EntropyLens", version="1.0.0")
-config = load_config()
+app =FastAPI(title="EntropyLens", version="1.0.0")
+config =load_config()
 
 @app.get("/")
 def root():
