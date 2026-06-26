@@ -349,17 +349,13 @@ entropylens/
 - Elhage et al. — [A Mathematical Framework for Transformer Circuits](https://transformer-circuits.pub/2021/framework/index.html)
 - Holtzman et al. — [The Curious Case of Neural Text Degeneration](https://arxiv.org/abs/1904.09751) (the paper that introduced nucleus/top-p sampling)
 - Neel Nanda — [TransformerLens](https://github.com/TransformerLensOrg/TransformerLens)
-- Aditya Singh — [NanoLens](https://github.com/AdityaSinghDevs/nanolens)
 
 ---
 
 ## Built By
 
-**Aarav Jain** — B.Tech AI & ML, VIPS-TC Delhi  
-NLP Cell Lead, IEEE VIPS Student Branch  
+**Aarav Jain**
 [GitHub](https://github.com/AaravJain62677) · [Blog](https://aaravjain.hashnode.dev)
-
-Inspired by the design philosophy of NanoLens: build it from first principles, inspect everything, write down what you find.
 
 ---
 
