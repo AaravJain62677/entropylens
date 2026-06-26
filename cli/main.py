@@ -1,5 +1,3 @@
-# cli/main.py
-
 import typer
 from services.state import model_state
 from services.comparator import run_comparison

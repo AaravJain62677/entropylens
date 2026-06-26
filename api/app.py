@@ -1,5 +1,3 @@
-# api/app.py
-
 from fastapi import FastAPI, HTTPException
 from api.schemas import CompareRequest, CompareResponse, StrategyResult
 from services.state import model_state

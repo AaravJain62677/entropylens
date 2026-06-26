@@ -1,5 +1,3 @@
-# strategies/registry.py
-
 STRATEGIES = {
     "greedy": {
         "do_sample": False,

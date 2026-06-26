@@ -1,5 +1,3 @@
-# services/comparator.py
-
 from strategies.registry import get_strategy
 from inference.runner import run_inference
 from metrics.entropy import token_entropies, mean_entropy

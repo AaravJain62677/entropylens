@@ -1,5 +1,3 @@
-# batch_run.py
-
 import json
 from pathlib import Path
 from inference.loader import load_model_and_tokenizer

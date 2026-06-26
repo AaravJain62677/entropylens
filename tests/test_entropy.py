@@ -1,5 +1,3 @@
-# tests/test_entropy.py
-
 import torch
 from metrics.entropy import token_entropies, mean_entropy
 

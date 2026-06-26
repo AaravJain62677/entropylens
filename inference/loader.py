@@ -1,5 +1,3 @@
-# inference/loader.py
-
 from transformers import AutoModelForCausalLM, AutoTokenizer
 import torch
 

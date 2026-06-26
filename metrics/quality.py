@@ -1,5 +1,3 @@
-# metrics/quality.py
-
 from nltk.translate.bleu_score import sentence_bleu, SmoothingFunction
 
 def repetition_rate(text: str) -> float:

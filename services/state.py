@@ -1,5 +1,3 @@
-# services/state.py
-
 from inference.loader import load_model_and_tokenizer
 
 class ModelState:

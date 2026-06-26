@@ -1,5 +1,3 @@
-# inference/runner.py
-
 import time
 import torch
 from transformers import PreTrainedModel, PreTrainedTokenizer
