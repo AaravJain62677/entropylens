@@ -53,9 +53,9 @@ Supported models out of the box: **Qwen2.5-1.5B-Instruct** and **Phi-3-mini-4k-i
 
 ---
 
-## Relation to TransformerLens and NanoLens
+## Relation to TransformerLens
 
-TransformerLens and NanoLens operate on a model's *internals*. They expose attention heads, residual stream activations, and hidden states via hooks and weight captures. They answer: *what circuit produced this behaviour?*
+TransformerLens operate on a model's *internals*. They expose attention heads, residual stream activations, and hidden states via hooks and weight captures. They answer: *what circuit produced this behaviour?*
 
 EntropyLens operates one level above that. It observes the *output distribution* — the logit tensor produced at each generation step — and asks: *how uncertain was the model here, and how does the decoding strategy change that?*
 
