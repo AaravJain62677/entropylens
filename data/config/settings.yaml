@@ -1,0 +1,36 @@
+project:
+  name: EntropyLens
+  artifacts_dir: "./artifacts"
+
+models:
+  qwen-1.5b:
+    path: "Qwen/Qwen2.5-1.5B-Instruct"
+    type: "causal_lm"
+  phi-3-mini:
+    path: "microsoft/Phi-3-mini-4k-instruct"
+    type: "causal_lm"
+
+inference:
+  default_model: "qwen-1.5b"
+  device: "auto"
+  max_new_tokens: 200
+
+strategies:
+  greedy:
+    do_sample: false
+  top_k:
+    do_sample: true
+    top_k: 50
+    temperature: 1.2
+  top_p:
+    do_sample: true
+    top_p: 0.9
+    temperature: 1.2
+  beam:
+    do_sample: false
+    num_beams: 4
+    early_stopping: true
+
+logging:
+  enabled: true
+  level: "INFO"
