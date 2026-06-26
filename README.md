@@ -73,6 +73,42 @@ EntropyLens is the diagnostic layer that surfaces *where* uncertainty concentrat
 
 ---
 
+## Related Work and Honest Positioning
+
+EntropyLens is not the first tool to connect entropy and LLM generation. Here is what exists and where EntropyLens sits relative to it.
+
+**Entropy-Lens (Akhmedov et al., 2025 — arXiv:2502.16570)**  
+The closest name and the closest concept. This is a research paper (not a standalone tool) that uses entropy to analyze *intermediate layer representations* via the logit lens — it tracks how entropy evolves through the residual stream across layers, not across decoding strategies. It builds on TransformerLens and requires hook-level access. EntropyLens by contrast observes the final output logit distribution and requires no internal access — different question, different layer, different scope.
+
+**LM-Polygraph (Fadeeva et al., 2023)**  
+A production-grade uncertainty estimation framework with 40+ UQ methods, benchmark infrastructure, and a web demo. It measures uncertainty to detect hallucinations and evaluate model reliability on tasks. It does not compare decoding strategies or visualize per-token entropy interactively. It is a research benchmark; EntropyLens is an interactive comparator. LM-Polygraph is the right tool if you want rigorous hallucination detection. EntropyLens is the right tool if you want to understand *how sampling strategy shapes the distribution* on a specific prompt.
+
+**Decoding Uncertainty (Hashimoto et al., EMNLP 2025 Findings)**  
+The paper closest in research question to EntropyLens — it directly studies how decoding strategies affect uncertainty estimation. It runs experiments on Qwen2.5 and Llama across multiple datasets and decoding strategies. It is a paper with a research codebase, not a usable tool. EntropyLens operationalizes the same question as an interactive local platform: any prompt, any HuggingFace model, results in under 2 minutes.
+
+**GLTR (Gehrmann et al., 2019)**  
+Visualizes token-level log-probability to detect machine-generated text. Shares the "per-token distribution visualization" idea but is built for text forensics, not decoding comparison. No strategy comparison, no entropy metric, no artifact export.
+
+**AnimatedLLM (2025)**  
+An educational visualization tool that shows how autoregressive decoding works with animated token selection. Precomputed traces, browser-based, focused on teaching. Not interactive on arbitrary prompts, no entropy measurement, no strategy comparison.
+
+
+### Where EntropyLens fits
+
+| Tool | Per-token entropy | Decoding strategy comparison | Any local model | Terminal/CLI | Artifact export |
+|------|:-:|:-:|:-:|:-:|:-:|
+| Entropy-Lens (paper) | ✓ (layer-level) | ✗ | ✗ | ✗ | ✗ |
+| LM-Polygraph | ✓ (sequence-level) | Partial | ✓ | ✗ | ✓ |
+| Decoding Uncertainty | ✓ | ✓ | ✓ | ✗ | Research only |
+| GLTR | ✓ (log-prob) | ✗ | ✗ | ✗ | ✗ |
+| AnimatedLLM | ✗ | ✗ | ✗ | ✗ | ✗ |
+| **EntropyLens** | **✓ (token-level)** | **✓** | **✓** | **✓** | **✓** |
+
+The gap EntropyLens fills: an interactive, local, CLI-first platform that runs any prompt through multiple decoding strategies simultaneously and surfaces per-token entropy from raw logits in real time. No server required. No precomputed traces. No paper to read first.
+
+The honest caveat: EntropyLens does not implement the rigorous uncertainty estimation methods that LM-Polygraph does (semantic uncertainty, mutual information, conformal prediction). If your goal is hallucination detection or UQ benchmarking, use LM-Polygraph. If your goal is understanding how greedy differs from top-p on *your* prompt on *your* model, EntropyLens is the faster path.
+
+
 ## Quickstart
 
 ```bash
@@ -283,8 +319,6 @@ Any `AutoModelForCausalLM` model can be added via `config/settings.yaml` — no 
 - HTML entropy heatmap export, colour-coded per token in browser
 - Multi-model parallel comparison: same prompt, same strategy, different models
 - Temperature sweep mode: hold strategy fixed, vary temperature, plot entropy curve
-- Base model support alongside instruction-tuned models for entropy range comparison
-- arXiv note on entropy patterns across prompt types and model families
 
 ---
 
