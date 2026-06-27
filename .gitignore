@@ -2,6 +2,7 @@ venv/
 .venv/
 artifacts/
 scratch.py
+batch_run.py
 __pycache__/
 *.pyc
 *.pyo
