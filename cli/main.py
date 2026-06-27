@@ -10,6 +10,8 @@ from rich import print_json
 from rich.console import Console
 console = Console()
 import json
+import warnings
+warnings.filterwarnings("ignore")
 
 BANNER = """
   ███████╗███╗   ██╗████████╗██████╗  ██████╗ ██████╗ ██╗   ██╗██╗     ███████╗███╗   ██╗███████╗
