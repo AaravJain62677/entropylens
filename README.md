@@ -96,25 +96,24 @@ EntropyLens is the diagnostic layer that surfaces *where* uncertainty concentrat
 
 ---
 
-## Related Work 
+## Related Work
 
 EntropyLens is not the first tool to connect entropy and LLM generation. Here is what exists and where EntropyLens sits relative to it.
 
-**Entropy-Lens (Akhmedov et al., 2025 — arXiv:2502.16570)**  
+**Entropy-Lens (Akhmedov et al., 2025 — arXiv:2502.16570)**
 The closest name and the closest concept. This is a research paper (not a standalone tool) that uses entropy to analyze *intermediate layer representations* via the logit lens — it tracks how entropy evolves through the residual stream across layers, not across decoding strategies. It builds on TransformerLens and requires hook-level access. EntropyLens by contrast observes the final output logit distribution and requires no internal access — different question, different layer, different scope.
 
-**LM-Polygraph (Fadeeva et al., 2023)**  
+**LM-Polygraph (Fadeeva et al., 2023)**
 A production-grade uncertainty estimation framework with 40+ UQ methods, benchmark infrastructure, and a web demo. It measures uncertainty to detect hallucinations and evaluate model reliability on tasks. It does not compare decoding strategies or visualize per-token entropy interactively. It is a research benchmark; EntropyLens is an interactive comparator. LM-Polygraph is the right tool if you want rigorous hallucination detection. EntropyLens is the right tool if you want to understand *how sampling strategy shapes the distribution* on a specific prompt.
 
-**Decoding Uncertainty (Hashimoto et al., EMNLP 2025 Findings)**  
+**Decoding Uncertainty (Hashimoto et al., EMNLP 2025 Findings)**
 The paper closest in research question to EntropyLens — it directly studies how decoding strategies affect uncertainty estimation. It runs experiments on Qwen2.5 and Llama across multiple datasets and decoding strategies. It is a paper with a research codebase, not a usable tool. EntropyLens operationalizes the same question as an interactive local platform: any prompt, any HuggingFace model, results in under 2 minutes.
 
-**GLTR (Gehrmann et al., 2019)**  
+**GLTR (Gehrmann et al., 2019)**
 Visualizes token-level log-probability to detect machine-generated text. Shares the "per-token distribution visualization" idea but is built for text forensics, not decoding comparison. No strategy comparison, no entropy metric, no artifact export.
 
-**AnimatedLLM (2025)**  
+**AnimatedLLM (2025)**
 An educational visualization tool that shows how autoregressive decoding works with animated token selection. Precomputed traces, browser-based, focused on teaching. Not interactive on arbitrary prompts, no entropy measurement, no strategy comparison.
-
 
 ### Where EntropyLens fits
 
@@ -131,6 +130,7 @@ The gap EntropyLens fills: an interactive, local, CLI-first platform that runs a
 
 The honest caveat: EntropyLens does not implement the rigorous uncertainty estimation methods that LM-Polygraph does (semantic uncertainty, mutual information, conformal prediction). If your goal is hallucination detection or UQ benchmarking, use LM-Polygraph. If your goal is understanding how greedy differs from top-p on *your* prompt on *your* model, EntropyLens is the faster path.
 
+---
 
 ## Quickstart
 
@@ -233,19 +233,13 @@ Update the path to match your local setup, then run from PowerShell:
 
 Note: `run.bat` is gitignored — it's a local convenience file, not part of the repo since paths differ per machine.
 
+---
+
 ## Example Output
 
-```
-                      Decoding Strategy Comparison
-╭──────────┬───────────────┬──────────────┬────────────┬──────────────┬─────────────────╮
-│ Strategy │ Output tokens │ Latency (ms) │ Tokens/sec │ Mean entropy │ Repetition rate │
-├──────────┼───────────────┼──────────────┼────────────┼──────────────┼─────────────────┤
-│ greedy   │           200 │     19060.69 │      10.49 │        1.017 │           0.453 │
-│ top_k    │           200 │     17999.05 │      11.11 │        1.414 │           0.257 │
-│ top_p    │           200 │     17901.17 │      11.17 │        1.205 │           0.301 │
-│ beam     │           200 │     18352.24 │       10.9 │        1.013 │           0.439 │
-╰──────────┴───────────────┴──────────────┴────────────┴──────────────┴─────────────────╯
+![EntropyLens — Poem prompt comparison across 4 decoding strategies](docs/demo.png)
 
+```
 Per-token entropy (■ = high uncertainty)
 
 greedy
@@ -306,10 +300,13 @@ Beam's entropy bars show large late-sequence spikes (H=6.91, H=7.05 on some prom
 
 ## Architecture
 
-```
-<img width="1149" height="1369" alt="image" src="https://github.com/user-attachments/assets/df240986-adc3-4747-ae2d-9c0b68a833a3" />
+![EntropyLens architecture](docs/architecture.png)
 
-```
+EntropyLens follows a strict layered pattern. Business logic lives once in `services/` — the CLI and FastAPI are both thin wrappers over that shared layer. A prompt enters at the top, flows through the comparator which runs each strategy through the inference engine, collects metrics, and surfaces results at the bottom as terminal output and JSON artifacts.
+
+The key technical decision: `runner.py` uses `output_logits=True` in `model.generate()` rather than `output_scores=True`. The difference matters — `output_scores` returns post-filtered distributions after top-k/top-p has already been applied, which artificially compresses entropy for sampling strategies. `output_logits=True` returns truly raw pre-sampling logits, ensuring entropy measurements reflect the model's actual internal distribution.
+
+---
 
 ## CLI Reference
 
@@ -319,6 +316,9 @@ python -m cli.main compare -p "Your prompt here"
 
 # Specify model and subset of strategies
 python -m cli.main compare -p "Your prompt" -m phi-3-mini -s greedy -s top_p
+
+# Full per-token entropy bars
+python -m cli.main compare -p "Your prompt" --verbose
 
 # List all saved run artifacts
 python -m cli.main list
@@ -388,10 +388,20 @@ python -m pytest tests/ -v
 ```
 
 ```
+tests/test_comparator.py::test_comparator_returns_all_strategies PASSED
+tests/test_comparator.py::test_comparator_result_has_required_keys PASSED
+tests/test_comparator.py::test_comparator_mean_entropy_is_float PASSED
+tests/test_comparator.py::test_comparator_entropies_length_matches_output_tokens PASSED
 tests/test_entropy.py::test_uniform_distribution_has_max_entropy PASSED
 tests/test_entropy.py::test_deterministic_distribution_has_zero_entropy PASSED
 tests/test_entropy.py::test_mean_entropy PASSED
-3 passed in 0.38s
+tests/test_strategies.py::test_list_strategies_returns_all_four PASSED
+tests/test_strategies.py::test_get_strategy_greedy PASSED
+tests/test_strategies.py::test_get_strategy_top_k PASSED
+tests/test_strategies.py::test_get_strategy_top_p PASSED
+tests/test_strategies.py::test_get_strategy_beam PASSED
+tests/test_strategies.py::test_get_strategy_invalid_raises PASSED
+13 passed
 ```
 
 ---
@@ -418,7 +428,8 @@ entropylens/
 │   └── terminal.py
 │
 ├── docs/
-│   └── demo.png
+│   ├── demo.png
+│   └── architecture.png
 │
 ├── inference/
 │   ├── loader.py
@@ -450,7 +461,6 @@ entropylens/
 │
 ├── .env.example
 ├── .gitignore
-├── batch_run.py
 ├── LICENSE
 ├── pyproject.toml
 ├── pytest.ini
@@ -464,18 +474,22 @@ entropylens/
 
 - Vaswani et al. — [Attention Is All You Need](https://arxiv.org/abs/1706.03762)
 - Elhage et al. — [A Mathematical Framework for Transformer Circuits](https://transformer-circuits.pub/2021/framework/index.html)
-- Holtzman et al. — [The Curious Case of Neural Text Degeneration](https://arxiv.org/abs/1904.09751) (the paper that introduced nucleus/top-p sampling)
+- Holtzman et al. — [The Curious Case of Neural Text Degeneration](https://arxiv.org/abs/1904.09751)
+- Akhmedov et al. — [Entropy-Lens: Uncovering Decision Strategies in LLMs](https://arxiv.org/abs/2502.16570)
+- Fadeeva et al. — [LM-Polygraph: Uncertainty Estimation for Language Models](https://arxiv.org/abs/2311.07383)
+- Hashimoto et al. — [Decoding Uncertainty: The Impact of Decoding Strategies on Uncertainty Estimation in LLMs](https://arxiv.org/abs/2509.16696)
 - Neel Nanda — [TransformerLens](https://github.com/TransformerLensOrg/TransformerLens)
 
 ---
 
 ## Built By
 
-**Aarav Jain**
+**Aarav Jain** 
 [GitHub](https://github.com/AaravJain62677) · [Blog](https://aaravjain.hashnode.dev)
+
 
 ---
 
 ## License
 
-MIT — see LICENSE for details.
+MIT — see [LICENSE](LICENSE) for details.
