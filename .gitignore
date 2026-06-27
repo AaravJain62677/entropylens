@@ -1,7 +1,9 @@
-scratch.py
-artifacts/
 venv/
+.venv/
+artifacts/
+scratch.py
 __pycache__/
 *.pyc
+*.pyo
 .env
 run.bat
