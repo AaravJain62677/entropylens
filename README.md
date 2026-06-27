@@ -17,6 +17,29 @@ A terminal-based platform that runs the same prompt through multiple decoding st
 
 ---
 
+## Table of Contents
+
+- [Motivation](#motivation)
+- [What EntropyLens Is](#what-entropylens-is)
+- [Relation to TransformerLens](#relation-to-transformerlens)
+- [Related Work](#related-work)
+- [Quickstart](#quickstart)
+- [Example Output](#example-output)
+- [Research Findings](#research-findings)
+- [Architecture](#architecture)
+- [CLI Reference](#cli-reference)
+- [HTTP API](#http-api)
+- [Supported Models](#supported-models)
+- [Supported Decoding Strategies](#supported-decoding-strategies)
+- [Limitations (V1)](#limitations-v1)
+- [Running Tests](#running-tests)
+- [Repository Structure](#repository-structure)
+- [References](#references)
+- [Built By](#built-by)
+- [License](#license)
+
+---
+
 ## Motivation
 
 There is a specific kind of opacity that comes with sampling from a language model. You see the output. You do not see what was discarded to produce it.
@@ -73,7 +96,7 @@ EntropyLens is the diagnostic layer that surfaces *where* uncertainty concentrat
 
 ---
 
-## Related Work and Honest Positioning
+## Related Work 
 
 EntropyLens is not the first tool to connect entropy and LLM generation. Here is what exists and where EntropyLens sits relative to it.
 
@@ -111,20 +134,104 @@ The honest caveat: EntropyLens does not implement the rigorous uncertainty estim
 
 ## Quickstart
 
+### Prerequisites
+- Python 3.10+
+- CUDA-capable GPU (tested on RTX 3050 6GB+)
+- 4GB+ VRAM for Qwen2.5-1.5B, 5GB+ for Phi-3-mini
+
+### Installation
+
+**1 — Clone the repo**
 ```bash
 git clone https://github.com/AaravJain62677/entropylens
 cd entropylens
-pip install torch --index-url https://download.pytorch.org/whl/cu121   # CUDA 12.1
-pip install -e ".[dev]"
 ```
 
-Run a comparison:
+**2 — Create and activate a virtual environment**
+```bash
+python -m venv venv
+venv\Scripts\activate        # Windows
+source venv/bin/activate     # Linux/Mac
+```
+
+**3 — Install PyTorch with CUDA**
+```bash
+# CUDA 12.1 (recommended)
+pip install torch --index-url https://download.pytorch.org/whl/cu121
+
+# verify GPU is detected
+python -c "import torch; print(torch.cuda.is_available())"
+# should print: True
+```
+
+**4 — Install dependencies**
+```bash
+pip install -r requirements.txt
+```
+
+**5 — Download NLTK data**
+```bash
+python -c "import nltk; nltk.download('punkt'); nltk.download('punkt_tab')"
+```
+
+### Run your first comparison
 
 ```bash
 python -m cli.main compare -p "Once upon a time in a land far away,"
 ```
 
----
+The model (~3GB) downloads automatically on first run from HuggingFace. Subsequent runs load from cache.
+
+### Common commands
+
+```bash
+# compare with verbose per-token entropy bars
+python -m cli.main compare -p "Your prompt" --verbose
+
+# use a different model
+python -m cli.main compare -p "Your prompt" -m phi-3-mini
+
+# run specific strategies only
+python -m cli.main compare -p "Your prompt" -s greedy -s top_p
+
+# list saved runs
+python -m cli.main list
+
+# inspect a run
+python -m cli.main show run_XXXX.json
+
+# start the HTTP API
+uvicorn api.app:app --reload
+```
+
+### Run tests
+
+```bash
+python -m pytest tests/ -v
+```
+
+All 13 tests run without a GPU — the comparator tests use mocked models.
+
+### Windows shortcut
+
+To avoid typing the full command every time, create a `run.bat` in the project root:
+
+```bat
+@echo off
+call "C:\path\to\entropylens\venv\Scripts\activate.bat"
+python -m cli.main %*
+```
+
+Update the path to match your local setup, then run from PowerShell:
+
+```bash
+.\run compare -p "Your prompt"
+.\run compare -p "Your prompt" --verbose
+.\run list
+.\run show run_XXXX.json
+```
+
+Note: `run.bat` is gitignored — it's a local convenience file, not part of the repo since paths differ per machine.
 
 ## Example Output
 
@@ -199,49 +306,10 @@ Beam's entropy bars show large late-sequence spikes (H=6.91, H=7.05 on some prom
 
 ## Architecture
 
-EntropyLens follows a strict layered architecture. Business logic lives once, in `services/`. The CLI and API are both thin wrappers over that shared layer.
+```
+<img width="1149" height="1369" alt="image" src="https://github.com/user-attachments/assets/df240986-adc3-4747-ae2d-9c0b68a833a3" />
 
 ```
-entropylens/
-│
-├── config/settings.yaml       # models, strategies, inference params — nothing hardcoded
-│
-├── strategies/registry.py     # strategy name → model.generate() kwargs
-│
-├── inference/
-│   ├── loader.py              # AutoModelForCausalLM + tokenizer loading
-│   └── runner.py              # generate() wrapper, returns text + raw logits
-│
-├── metrics/
-│   ├── entropy.py             # per-token Shannon entropy from logit tensors
-│   ├── latency.py             # timing + tokens/sec
-│   └── quality.py             # BLEU, repetition rate
-│
-├── services/
-│   ├── state.py               # active model singleton (shared by CLI + API)
-│   └── comparator.py          # orchestrates N strategies → N result dicts
-│
-├── display/terminal.py        # rich comparison table + color-coded entropy bars
-│
-├── tracking/
-│   ├── writer.py              # timestamped JSON artifact export
-│   └── report.py              # load, list, diff past runs
-│
-├── cli/main.py                # Typer: compare, list, show, diff
-│
-├── api/
-│   ├── app.py                 # FastAPI: /compare, /strategies, /
-│   └── schemas.py             # Pydantic request/response models
-│
-└── tests/
-    ├── test_entropy.py        # entropy math unit tests (3/3 passing)
-    ├── test_strategies.py
-    └── test_comparator.py
-```
-
-The `runner.py` uses `output_logits=True` in `model.generate()` — this returns truly raw pre-sampling logits before any top-k/top-p filtering is applied, ensuring entropy measurements reflect the model's actual internal distribution rather than the post-filtered one.
-
----
 
 ## CLI Reference
 
@@ -313,15 +381,6 @@ Any `AutoModelForCausalLM` model can be added via `config/settings.yaml` — no 
 
 ---
 
-## Planned (V2)
-
-- TransformerLens integration: hook into attention heads at high-entropy token positions — the natural next step from "where is the model uncertain" to "why"
-- HTML entropy heatmap export, colour-coded per token in browser
-- Multi-model parallel comparison: same prompt, same strategy, different models
-- Temperature sweep mode: hold strategy fixed, vary temperature, plot entropy curve
-
----
-
 ## Running Tests
 
 ```bash
@@ -341,38 +400,62 @@ tests/test_entropy.py::test_mean_entropy PASSED
 
 ```
 entropylens/
+│
+├── api/
+│   ├── app.py
+│   └── schemas.py
+│
+├── cli/
+│   └── main.py
+│
 ├── config/
 │   └── settings.yaml
-├── strategies/
-│   └── registry.py
+│
+├── data/
+│   └── prompts.json
+│
+├── display/
+│   └── terminal.py
+│
+├── docs/
+│   └── demo.png
+│
 ├── inference/
 │   ├── loader.py
 │   └── runner.py
+│
 ├── metrics/
 │   ├── entropy.py
 │   ├── latency.py
 │   └── quality.py
+│
 ├── services/
-│   ├── state.py
-│   └── comparator.py
-├── display/
-│   └── terminal.py
-├── tracking/
-│   ├── writer.py
-│   └── report.py
-├── cli/
-│   └── main.py
-├── api/
-│   ├── app.py
-│   └── schemas.py
+│   ├── comparator.py
+│   └── state.py
+│
+├── strategies/
+│   └── registry.py
+│
 ├── tests/
-├── data/
-│   └── prompts.json
-├── artifacts/            # gitignored, generated at runtime
+│   ├── test_comparator.py
+│   ├── test_entropy.py
+│   └── test_strategies.py
+│
+├── tracking/
+│   ├── report.py
+│   └── writer.py
+│
 ├── utils/
 │   └── loader.py
+│
+├── .env.example
+├── .gitignore
+├── batch_run.py
+├── LICENSE
 ├── pyproject.toml
-└── README.md
+├── pytest.ini
+├── README.md
+└── requirements.txt
 ```
 
 ---
