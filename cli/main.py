@@ -7,7 +7,22 @@ from tracking.report import list_runs, load_run, diff_runs
 from utils.loader import load_config
 from strategies.registry import list_strategies
 from rich import print_json
+from rich.console import Console
+console = Console()
 import json
+
+BANNER = """
+  ███████╗███╗   ██╗████████╗██████╗  ██████╗ ██████╗ ██╗   ██╗██╗     ███████╗███╗   ██╗███████╗
+  ██╔════╝████╗  ██║╚══██╔══╝██╔══██╗██╔═══██╗██╔══██╗╚██╗ ██╔╝██║     ██╔════╝████╗  ██║██╔════╝
+  █████╗  ██╔██╗ ██║   ██║   ██████╔╝██║   ██║██████╔╝ ╚████╔╝ ██║     █████╗  ██╔██╗ ██║███████╗
+  ██╔══╝  ██║╚██╗██║   ██║   ██╔══██╗██║   ██║██╔═══╝   ╚██╔╝  ██║     ██╔══╝  ██║╚██╗██║╚════██║
+  ███████╗██║ ╚████║   ██║   ██║  ██║╚██████╔╝██║        ██║   ███████╗███████╗██║ ╚████║███████║
+  ╚══════╝╚═╝  ╚═══╝   ╚═╝   ╚═╝  ╚═╝ ╚═════╝ ╚═╝        ╚═╝   ╚══════╝╚══════╝╚═╝  ╚═══╝╚══════╝
+                    UNCERTAINITY BEHIND EVERY TOKEN MADE VISIBLE 
+"""
+
+def show_banner():
+    console.print(f"[bold cyan]{BANNER}[/bold cyan]")
 
 app = typer.Typer(name="EntropyLens", help="EntropyLens")
 config = load_config()
@@ -23,7 +38,8 @@ def compare(
     prompt: str = typer.Option(..., "-p", help="Prompt to compare strategies on"),
     model: str = typer.Option(config["inference"]["default_model"], "-m"),
     strategies: list[str] = typer.Option(list_strategies(), "-s"),
-):
+    ):
+    show_banner()
     _ensure_model_loaded(model)
     results = run_comparison(
         prompt, strategies,
@@ -34,7 +50,6 @@ def compare(
     print_entropy_bars(results)
     fname = save_run(prompt, model, results)
     typer.echo(f"\nRun saved → artifacts/runs/{fname}")
-
 @app.command("list")
 def list_cmd():
     runs = list_runs()
