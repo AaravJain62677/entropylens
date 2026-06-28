@@ -8,7 +8,7 @@
   ███████╗██║ ╚████║   ██║   ██║  ██║╚██████╔╝██║        ██║   ███████╗███████╗██║ ╚████║███████║
   ╚══════╝╚═╝  ╚═══╝   ╚═╝   ╚═╝  ╚═╝ ╚═════╝ ╚═╝        ╚═╝   ╚══════╝╚══════╝╚═╝  ╚═══╝╚══════╝
 
-                    See what your model was thinking before it spoke
+                   UNCERTAINITY BEHIND EVERY TOKEN MADE VISIBLE
 ```
 
 A terminal-based platform that runs the same prompt through multiple decoding strategies simultaneously and visualizes Shannon entropy from raw logit distributions — per token, per strategy, side by side.
