@@ -2,30 +2,22 @@
   {
     "id": "q001",
     "category": "factual",
-    "question": "What is the capital of Australia?",
+    "question": "What is the capital city of Australia?",
     "answer": "Canberra",
     "acceptable_answers": [
-      "Canberra",
-      "canberra",
-      "the capital of Australia is Canberra",
-      "the capital of Australia is canberra",
-      "Canberra is the capital of Australia"
+      "Canberra"
     ],
     "alternative_answer": "Sydney"
   },
   {
     "id": "q002",
     "category": "factual",
-    "question": "What is the largest planet in our solar system?",
-    "answer": "Jupiter",
+    "question": "Which country gifted the Statue of Liberty to the United States?",
+    "answer": "France",
     "acceptable_answers": [
-      "Jupiter",
-      "jupiter",
-      "the largest planet in our solar system is Jupiter",
-      "the largest planet in our solar system is jupiter",
-      "Jupiter is the largest planet in our solar system"
+      "France"
     ],
-    "alternative_answer": "Earth"
+    "alternative_answer": "Spain"
   },
   {
     "id": "q003",
@@ -34,304 +26,419 @@
     "answer": "George Orwell",
     "acceptable_answers": [
       "George Orwell",
-      "george orwell",
-      "George Orwell wrote the novel 1984",
-      "George Orwell wrote 1984",
-      "the novel 1984 was written by George Orwell",
-      "1984 was written by George Orwell",
-      "the author of 1984 is George Orwell",
-      "George Orwell is the author of 1984"
+      "Orwell"
     ],
-    "alternative_answer": "Charles Dickens"
+    "alternative_answer": "Aldous Huxley"
   },
   {
     "id": "q004",
     "category": "factual",
-    "question": "What is the chemical symbol for gold?",
-    "answer": "Au",
+    "question": "What is the largest ocean on Earth?",
+    "answer": "Pacific Ocean",
     "acceptable_answers": [
-      "Au",
-      "au",
-      "AU",
-      "gold is Au",
-      "gold is au",
-      "the chemical symbol for gold is Au",
-      "the chemical symbol for gold is au",
-      "Au is the chemical symbol for gold"
+      "Pacific Ocean",
+      "Pacific"
     ],
-    "alternative_answer": "Ag"
+    "alternative_answer": "Atlantic Ocean"
   },
   {
     "id": "q005",
     "category": "factual",
-    "question": "How many continents are there on Earth?",
+    "question": "How many continents are traditionally recognized on Earth?",
     "answer": "7",
     "acceptable_answers": [
       "7",
-      "seven",
-      "Seven",
-      "there are seven continents on Earth",
-      "there are seven continents on earth",
-      "there are 7 continents on Earth",
-      "there are 7 continents on earth",
-      "Earth has seven continents",
-      "Earth has 7 continents"
+      "seven"
     ],
     "alternative_answer": "6"
   },
   {
     "id": "q006",
-    "category": "science",
-    "question": "What force pulls objects toward the center of the Earth?",
-    "answer": "Gravity",
+    "category": "factual",
+    "question": "Which planet is known as the Red Planet?",
+    "answer": "Mars",
     "acceptable_answers": [
-      "Gravity",
-      "gravity",
-      "the force is gravity",
-      "the force is gravitational force",
-      "gravity pulls objects toward the center of the Earth",
-      "gravity pulls objects toward the center of the earth",
-      "the force that pulls objects toward the center of Earth is gravity",
-      "the force that pulls objects toward the center of the earth is gravity"
+      "Mars"
     ],
-    "alternative_answer": "Magnetism"
+    "alternative_answer": "Venus"
   },
   {
     "id": "q007",
-    "category": "science",
-    "question": "What gas do plants primarily absorb during photosynthesis?",
+    "category": "factual",
+    "question": "Which gas is primarily responsible for the bubbles in carbonated soft drinks?",
     "answer": "Carbon dioxide",
     "acceptable_answers": [
       "Carbon dioxide",
-      "carbon dioxide",
+      "carbon dioxide gas",
       "CO2",
-      "co2",
-      "Carbon dioxide (CO2)",
-      "carbon dioxide (co2)",
-      "plants primarily absorb carbon dioxide during photosynthesis",
-      "plants primarily absorb carbon dioxide during photosynthesis (CO2)",
-      "the gas is carbon dioxide",
-      "the gas plants primarily absorb is carbon dioxide"
+      "CO2 gas"
     ],
     "alternative_answer": "Oxygen"
   },
   {
     "id": "q008",
-    "category": "science",
-    "question": "What is the boiling point of water at standard atmospheric pressure in degrees Celsius?",
+    "category": "factual",
+    "question": "At standard atmospheric pressure, what is the boiling point of water in degrees Celsius?",
     "answer": "100",
     "acceptable_answers": [
       "100",
-      "100°C",
-      "100° C",
-      "100 degrees Celsius",
       "100 degrees celsius",
-      "100 C",
-      "100 c",
-      "the boiling point of water is 100 degrees Celsius",
-      "the boiling point of water is 100°C",
-      "water boils at 100 degrees Celsius",
-      "water boils at 100°C"
+      "100 celsius",
+      "100°C"
     ],
     "alternative_answer": "90"
   },
   {
     "id": "q009",
-    "category": "science",
-    "question": "What is the basic unit of life?",
+    "category": "factual",
+    "question": "What is the basic structural and functional unit of life?",
     "answer": "Cell",
     "acceptable_answers": [
       "Cell",
-      "cell",
-      "the cell",
-      "cells",
-      "the basic unit of life is the cell",
-      "the basic unit of life is typically considered to be the cell",
-      "the basic unit of life is considered to be the cell",
-      "the basic unit of life is a cell",
-      "a cell is the basic unit of life",
-      "the basic unit of life is the cell."
+      "a cell"
     ],
     "alternative_answer": "Atom"
   },
   {
     "id": "q010",
-    "category": "science",
-    "question": "Which organ pumps blood throughout the human body?",
-    "answer": "Heart",
+    "category": "factual",
+    "question": "Which language has the largest number of native speakers worldwide?",
+    "answer": "Mandarin Chinese",
     "acceptable_answers": [
-      "Heart",
-      "heart",
-      "the heart",
-      "heart pumps blood throughout the human body",
-      "the heart pumps blood throughout the human body",
-      "the heart is the organ that pumps blood throughout the human body",
-      "the organ that pumps blood throughout the human body is the heart",
-      "the heart pumps blood"
+      "Mandarin Chinese",
+      "Mandarin",
+      "Chinese"
     ],
-    "alternative_answer": "Liver"
+    "alternative_answer": "English"
   },
+
   {
     "id": "q011",
-    "category": "mathematics",
-    "question": "What is 15 multiplied by 6?",
-    "answer": "90",
+    "category": "science",
+    "question": "What process do plants use to convert light energy into chemical energy?",
+    "answer": "Photosynthesis",
     "acceptable_answers": [
-      "90",
-      "ninety",
-      "Ninety",
-      "15 multiplied by 6 is 90",
-      "15 times 6 is 90",
-      "15 x 6 is 90",
-      "15 × 6 is 90",
-      "the answer is 90"
+      "Photosynthesis"
     ],
-    "alternative_answer": "80"
+    "alternative_answer": "Cellular respiration"
   },
   {
     "id": "q012",
+    "category": "science",
+    "question": "What is the chemical symbol for sodium?",
+    "answer": "Na",
+    "acceptable_answers": [
+      "Na"
+    ],
+    "alternative_answer": "So"
+  },
+  {
+    "id": "q013",
+    "category": "science",
+    "question": "What is the approximate speed of light in vacuum?",
+    "answer": "3 × 10^8 meters per second",
+    "acceptable_answers": [
+      "3 × 10^8 meters per second",
+      "3e8 meters per second",
+      "300 million meters per second",
+      "300000000 meters per second"
+    ],
+    "alternative_answer": "3 × 10^6 meters per second"
+  },
+  {
+    "id": "q014",
+    "category": "science",
+    "question": "Which organelle is primarily responsible for producing ATP in eukaryotic cells?",
+    "answer": "Mitochondria",
+    "acceptable_answers": [
+      "Mitochondria",
+      "mitochondrion"
+    ],
+    "alternative_answer": "Ribosome"
+  },
+  {
+    "id": "q015",
+    "category": "science",
+    "question": "What is the pH of a neutral aqueous solution at approximately 25 degrees Celsius?",
+    "answer": "7",
+    "acceptable_answers": [
+      "7",
+      "seven"
+    ],
+    "alternative_answer": "5"
+  },
+  {
+    "id": "q016",
+    "category": "science",
+    "question": "What type of bond involves the sharing of electron pairs between atoms?",
+    "answer": "Covalent bond",
+    "acceptable_answers": [
+      "Covalent bond",
+      "covalent"
+    ],
+    "alternative_answer": "Ionic bond"
+  },
+  {
+    "id": "q017",
+    "category": "science",
+    "question": "Which blood cells are primarily responsible for transporting oxygen?",
+    "answer": "Red blood cells",
+    "acceptable_answers": [
+      "Red blood cells",
+      "red blood cells",
+      "erythrocytes"
+    ],
+    "alternative_answer": "White blood cells"
+  },
+  {
+    "id": "q018",
+    "category": "science",
+    "question": "What is the acceleration due to gravity near Earth's surface, approximately?",
+    "answer": "9.8 m/s^2",
+    "acceptable_answers": [
+      "9.8 m/s^2",
+      "9.8 m/s2",
+      "9.8 meters per second squared",
+      "9.81 m/s^2",
+      "9.81 m/s2"
+    ],
+    "alternative_answer": "98 m/s^2"
+  },
+  {
+    "id": "q019",
+    "category": "science",
+    "question": "Which particle determines the atomic number of an element?",
+    "answer": "Proton",
+    "acceptable_answers": [
+      "Proton",
+      "protons"
+    ],
+    "alternative_answer": "Electron"
+  },
+  {
+    "id": "q020",
+    "category": "science",
+    "question": "In DNA, which base pairs with adenine?",
+    "answer": "Thymine",
+    "acceptable_answers": [
+      "Thymine",
+      "T"
+    ],
+    "alternative_answer": "Cytosine"
+  },
+
+  {
+    "id": "q021",
+    "category": "mathematics",
+    "question": "What is 17 × 6?",
+    "answer": "102",
+    "acceptable_answers": [
+      "102"
+    ],
+    "alternative_answer": "112"
+  },
+  {
+    "id": "q022",
     "category": "mathematics",
     "question": "What is the square root of 144?",
     "answer": "12",
     "acceptable_answers": [
-      "12",
-      "twelve",
-      "Twelve",
-      "the square root of 144 is 12",
-      "the answer is 12",
-      "sqrt 144 is 12",
-      "square root of 144 equals 12"
+      "12"
     ],
     "alternative_answer": "14"
   },
   {
-    "id": "q013",
+    "id": "q023",
     "category": "mathematics",
-    "question": "What is 25 percent of 200?",
-    "answer": "50",
+    "question": "If x + 7 = 19, what is x?",
+    "answer": "12",
     "acceptable_answers": [
-      "50",
-      "fifty",
-      "Fifty",
-      "25 percent of 200 is 50",
-      "25% of 200 is 50",
-      "the answer is 50",
-      "25 percent of 200 equals 50"
+      "12"
+    ],
+    "alternative_answer": "13"
+  },
+  {
+    "id": "q024",
+    "category": "mathematics",
+    "question": "What is 15 percent of 200?",
+    "answer": "30",
+    "acceptable_answers": [
+      "30"
     ],
     "alternative_answer": "25"
   },
   {
-    "id": "q014",
+    "id": "q025",
     "category": "mathematics",
-    "question": "What is 7 squared?",
-    "answer": "49",
+    "question": "What is the derivative of x^2 with respect to x?",
+    "answer": "2x",
     "acceptable_answers": [
-      "49",
-      "forty nine",
-      "forty-nine",
-      "Forty nine",
-      "7 squared is 49",
-      "7 squared equals 49",
-      "the answer is 49"
+      "2x",
+      "2*x"
     ],
-    "alternative_answer": "42"
+    "alternative_answer": "x"
   },
   {
-    "id": "q015",
+    "id": "q026",
     "category": "mathematics",
-    "question": "If x + 8 = 15, what is x?",
-    "answer": "7",
+    "question": "What is the probability of rolling an even number on a fair six-sided die?",
+    "answer": "1/2",
     "acceptable_answers": [
-      "7",
-      "seven",
-      "Seven",
-      "x is 7",
-      "x equals 7",
-      "x = 7",
-      "the answer is 7"
+      "1/2",
+      "0.5",
+      "50 percent",
+      "50%"
     ],
-    "alternative_answer": "8"
+    "alternative_answer": "1/3"
   },
   {
-    "id": "q016",
+    "id": "q027",
+    "category": "mathematics",
+    "question": "If a triangle has angles of 50 degrees and 60 degrees, what is the third angle?",
+    "answer": "70 degrees",
+    "acceptable_answers": [
+      "70 degrees",
+      "70",
+      "70°"
+    ],
+    "alternative_answer": "80 degrees"
+  },
+  {
+    "id": "q028",
+    "category": "mathematics",
+    "question": "What is the value of 2^10?",
+    "answer": "1024",
+    "acceptable_answers": [
+      "1024"
+    ],
+    "alternative_answer": "1000"
+  },
+  {
+    "id": "q029",
+    "category": "mathematics",
+    "question": "What is the greatest common divisor of 48 and 18?",
+    "answer": "6",
+    "acceptable_answers": [
+      "6"
+    ],
+    "alternative_answer": "12"
+  },
+  {
+    "id": "q030",
+    "category": "mathematics",
+    "question": "A fair coin is flipped twice. What is the probability of getting exactly one head?",
+    "answer": "1/2",
+    "acceptable_answers": [
+      "1/2",
+      "0.5",
+      "50 percent",
+      "50%"
+    ],
+    "alternative_answer": "1/4"
+  },
+
+  {
+    "id": "q031",
     "category": "logic",
-    "question": "If all roses are flowers and some flowers are red, can we conclude that some roses are red?",
+    "question": "All roses are flowers. Some flowers fade quickly. Does it logically follow that some roses fade quickly?",
     "answer": "No",
     "acceptable_answers": [
       "No",
-      "no",
-      "No, we cannot conclude that some roses are red",
-      "no, we cannot conclude that some roses are red",
-      "cannot conclude",
-      "we cannot conclude",
-      "we cannot conclude that some roses are red",
-      "not necessarily",
-      "not necessarily, some roses are red cannot be concluded"
+      "No, it does not follow",
+      "It does not follow"
     ],
     "alternative_answer": "Yes"
   },
   {
-    "id": "q017",
+    "id": "q032",
     "category": "logic",
-    "question": "If A is greater than B and B is greater than C, is A greater than C?",
+    "question": "If all A are B and all B are C, does it follow that all A are C?",
     "answer": "Yes",
     "acceptable_answers": [
       "Yes",
-      "yes",
-      "A is greater than C",
-      "a is greater than c",
-      "A is greater than C because A is greater than B and B is greater than C",
-      "yes, A is greater than C",
-      "the answer is yes"
+      "Yes, it follows"
     ],
     "alternative_answer": "No"
   },
   {
-    "id": "q018",
+    "id": "q033",
     "category": "logic",
-    "question": "A train leaves at 10:00 and arrives at 12:30. How long is the journey?",
-    "answer": "2 hours 30 minutes",
+    "question": "If no cats are dogs and Luna is a cat, can Luna be a dog?",
+    "answer": "No",
     "acceptable_answers": [
-      "2 hours 30 minutes",
-      "2 hours and 30 minutes",
-      "2.5 hours",
-      "two hours and thirty minutes",
-      "two hours 30 minutes",
-      "the journey is 2 hours 30 minutes",
-      "the journey takes 2 hours and 30 minutes",
-      "2 hours 30 mins"
+      "No"
     ],
-    "alternative_answer": "3 hours"
+    "alternative_answer": "Yes"
   },
   {
-    "id": "q019",
+    "id": "q034",
     "category": "logic",
-    "question": "If there are 3 apples and you take away 2, how many apples do you have?",
-    "answer": "2",
+    "question": "If some A are B and all B are C, must some A be C?",
+    "answer": "Yes",
     "acceptable_answers": [
-      "2",
-      "two",
-      "Two",
-      "you have 2 apples",
-      "you have two apples",
-      "the answer is 2",
-      "the answer is two"
+      "Yes"
     ],
-    "alternative_answer": "1"
+    "alternative_answer": "No"
   },
   {
-    "id": "q020",
+    "id": "q035",
     "category": "logic",
-    "question": "If today is Monday, what day will it be three days from now?",
+    "question": "If A is taller than B and B is taller than C, is A necessarily taller than C?",
+    "answer": "Yes",
+    "acceptable_answers": [
+      "Yes"
+    ],
+    "alternative_answer": "No"
+  },
+  {
+    "id": "q036",
+    "category": "logic",
+    "question": "A statement says: 'All birds can fly.' Penguins are birds. Does the statement logically imply that penguins can fly?",
+    "answer": "Yes",
+    "acceptable_answers": [
+      "Yes",
+      "Yes, according to the statement"
+    ],
+    "alternative_answer": "No"
+  },
+  {
+    "id": "q037",
+    "category": "logic",
+    "question": "If a number is divisible by 4, must it be divisible by 2?",
+    "answer": "Yes",
+    "acceptable_answers": [
+      "Yes"
+    ],
+    "alternative_answer": "No"
+  },
+  {
+    "id": "q038",
+    "category": "logic",
+    "question": "If all squares are rectangles, does it follow that all rectangles are squares?",
+    "answer": "No",
+    "acceptable_answers": [
+      "No"
+    ],
+    "alternative_answer": "Yes"
+  },
+  {
+    "id": "q039",
+    "category": "logic",
+    "question": "If today is Monday, what day will it be three days later?",
     "answer": "Thursday",
     "acceptable_answers": [
-      "Thursday",
-      "thursday",
-      "it will be Thursday",
-      "it will be thursday",
-      "Thursday will be the day",
-      "the answer is Thursday"
+      "Thursday"
     ],
     "alternative_answer": "Friday"
+  },
+  {
+    "id": "q040",
+    "category": "logic",
+    "question": "If every member of group A is also a member of group B, and Ravi is not a member of B, can Ravi be a member of A?",
+    "answer": "No",
+    "acceptable_answers": [
+      "No"
+    ],
+    "alternative_answer": "Yes"
   }
 ]
