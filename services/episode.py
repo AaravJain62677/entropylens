@@ -1,5 +1,10 @@
-from interventions.base import Intervention
+from interventions.base import (
+    Intervention,
+    InterventionType,
+)
+
 from inference.runner import run_inference
+
 from metrics.entropy import (
     token_entropies,
     mean_entropy,
@@ -8,14 +13,21 @@ from metrics.entropy import (
     token_top_k_mass,
     mean_top_k_mass,
 )
+
 from metrics.latency import summarize_latency
 from metrics.quality import repetition_rate
+
 from strategies.registry import get_strategy
+
 from utils.answers import (
     extract_answer,
     answers_match,
+    answer_is_correct,
 )
-from services.outcomes import classify_answer_change
+
+from services.outcomes import (
+    classify_epistemic_outcome,
+)
 
 
 def format_prompt(
@@ -62,9 +74,6 @@ def measure_inference(
     """
     Run one inference and calculate all EntropyLens
     measurement signals.
-
-    The prompt is formatted for the target model before
-    generation.
     """
 
     formatted_prompt = format_prompt(
@@ -88,8 +97,10 @@ def measure_inference(
         output["scores"]
     )
 
-    probability_margins = token_probability_margins(
-        output["scores"]
+    probability_margins = (
+        token_probability_margins(
+            output["scores"]
+        )
     )
 
     top_k_masses = token_top_k_mass(
@@ -101,11 +112,15 @@ def measure_inference(
         "prompt": prompt,
         "formatted_prompt": formatted_prompt,
         "text": output["text"],
-        "generated_ids": output["generated_ids"],
+        "generated_ids": output[
+            "generated_ids"
+        ],
+
         "entropies": entropies,
         "mean_entropy": mean_entropy(
             entropies
         ),
+
         "probability_margins": (
             probability_margins
         ),
@@ -114,22 +129,27 @@ def measure_inference(
                 probability_margins
             )
         ),
+
         "top_k_masses": top_k_masses,
         "mean_top_k_mass": (
             mean_top_k_mass(
                 top_k_masses
             )
         ),
+
         "latency": summarize_latency(
             output["latency_ms"],
             output["num_output_tokens"],
         ),
+
         "repetition_rate": repetition_rate(
             output["text"]
         ),
+
         "num_input_tokens": (
             output["num_input_tokens"]
         ),
+
         "num_output_tokens": (
             output["num_output_tokens"]
         ),
@@ -143,95 +163,174 @@ def run_episode(
     model,
     tokenizer,
     max_new_tokens: int = 200,
+    ground_truth: str | None = None,
+    acceptable_answers: list[str] | None = None,
 ) -> dict:
     """
-    Run a baseline inference followed by an
-    intervention inference.
+    Run a baseline inference followed by either:
 
-    The intervention is applied to the raw question
-    BEFORE model-specific chat formatting.
+    - a repeat-control inference, or
+    - an intervention inference.
 
-    Both runs use the same model, tokenizer,
-    generation strategy, and measurement pipeline.
+    Both baseline and comparison prompts use the same
+    strict ANSWER format so that answer extraction
+    remains deterministic.
+
+    Control:
+        question + answer-format instruction
+
+    Intervention:
+        question + intervention + answer-format instruction
     """
 
-    # ---------------------------------------------------------
-    # Baseline
-    # ---------------------------------------------------------
+    answer_format_instruction = (
+        "\n\n"
+        "Answer in exactly this format and nothing else:\n"
+        "ANSWER: <your answer>"
+    )
+
+    baseline_prompt = (
+        question
+        + answer_format_instruction
+    )
 
     baseline = measure_inference(
-        prompt=question,
+        prompt=baseline_prompt,
         strategy_name=strategy_name,
         model=model,
         tokenizer=tokenizer,
         max_new_tokens=max_new_tokens,
     )
 
-    # ---------------------------------------------------------
-    # Intervention
-    #
-    # Apply the intervention to the raw prompt.
-    # measure_inference() then handles chat formatting.
-    # ---------------------------------------------------------
+    if (
+        intervention.type
+        == InterventionType.CONTROL
+    ):
+        comparison_prompt = baseline_prompt
+        comparison_label = "control"
+    else:
+        comparison_prompt = (
+            intervention.apply(question)
+            + answer_format_instruction
+        )
+        comparison_label = "intervened"
 
-    intervention_prompt = intervention.apply(
-        question
-    )
-
-    intervened = measure_inference(
-        prompt=intervention_prompt,
+    comparison = measure_inference(
+        prompt=comparison_prompt,
         strategy_name=strategy_name,
         model=model,
         tokenizer=tokenizer,
         max_new_tokens=max_new_tokens,
     )
-
-    # ---------------------------------------------------------
-    # Extract answers
-    # ---------------------------------------------------------
 
     baseline_answer = extract_answer(
         baseline["text"]
     )
 
-    intervened_answer = extract_answer(
-        intervened["text"]
+    comparison_answer = extract_answer(
+        comparison["text"]
     )
 
-    # ---------------------------------------------------------
-    # Compare answers
-    # ---------------------------------------------------------
+    if ground_truth is not None:
+        baseline_correct = answer_is_correct(
+            baseline_answer,
+            ground_truth,
+            acceptable_answers,
+        )
+
+        comparison_correct = answer_is_correct(
+            comparison_answer,
+            ground_truth,
+            acceptable_answers,
+        )
+    else:
+        baseline_correct = None
+        comparison_correct = None
 
     answer_changed = (
         None
         if (
             baseline_answer is None
-            or intervened_answer is None
+            or comparison_answer is None
         )
         else not answers_match(
             baseline_answer,
-            intervened_answer,
+            comparison_answer,
         )
     )
 
-    # ---------------------------------------------------------
-    # Classify behavioral outcome
-    # ---------------------------------------------------------
-
-    outcome = classify_answer_change(
-        answer_changed
+    outcome = classify_epistemic_outcome(
+        baseline_correct,
+        comparison_correct,
     )
 
-    return {
+    result = {
         "question": question,
         "intervention": {
             "type": intervention.type.value,
             "content": intervention.content,
         },
         "baseline": baseline,
-        "intervened": intervened,
         "baseline_answer": baseline_answer,
-        "intervened_answer": intervened_answer,
+        "baseline_correct": baseline_correct,
         "answer_changed": answer_changed,
+        "ground_truth": ground_truth,
+        "acceptable_answers": acceptable_answers,
         "outcome": outcome.value,
     }
+
+    if comparison_label == "control":
+        result["control"] = comparison
+        result["control_answer"] = comparison_answer
+        result["control_correct"] = comparison_correct
+
+        result["control_entropy_delta"] = (
+            comparison["mean_entropy"]
+            - baseline["mean_entropy"]
+        )
+
+        result[
+            "control_probability_margin_delta"
+        ] = (
+            comparison[
+                "mean_probability_margin"
+            ]
+            - baseline[
+                "mean_probability_margin"
+            ]
+        )
+
+        result["control_top_k_mass_delta"] = (
+            comparison["mean_top_k_mass"]
+            - baseline["mean_top_k_mass"]
+        )
+
+    else:
+        result["intervened"] = comparison
+        result["intervened_answer"] = comparison_answer
+        result["intervened_correct"] = comparison_correct
+
+        result["intervened_entropy_delta"] = (
+            comparison["mean_entropy"]
+            - baseline["mean_entropy"]
+        )
+
+        result[
+            "intervened_probability_margin_delta"
+        ] = (
+            comparison[
+                "mean_probability_margin"
+            ]
+            - baseline[
+                "mean_probability_margin"
+            ]
+        )
+
+        result[
+            "intervened_top_k_mass_delta"
+        ] = (
+            comparison["mean_top_k_mass"]
+            - baseline["mean_top_k_mass"]
+        )
+
+    return result

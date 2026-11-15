@@ -1,208 +1,208 @@
-import torch
-from unittest.mock import MagicMock
-
-from interventions.base import (
-    Intervention,
-    InterventionType,
-)
-from services.episode import run_episode
-
-
-def make_fake_scores(num_tokens=5, vocab_size=100):
-    return tuple(
-        torch.randn(1, vocab_size)
-        for _ in range(num_tokens)
+def test_episode_classifies_incorrect_to_correct(
+    monkeypatch,
+):
+    from services.episode import run_episode
+    from interventions.base import (
+        Intervention,
+        InterventionType,
     )
 
-
-def make_fake_model_and_tokenizer():
-    fake_inputs = MagicMock()
-
-    fake_inputs.__getitem__ = (
-        lambda self, key:
-        torch.ones(
-            1,
-            10,
-            dtype=torch.long,
-        )
+    responses = iter(
+        [
+            {
+                "text": "ANSWER: Sydney",
+                "generated_ids": [],
+                "scores": [],
+                "latency_ms": 10.0,
+                "num_output_tokens": 2,
+                "num_input_tokens": 10,
+            },
+            {
+                "text": "ANSWER: Canberra",
+                "generated_ids": [],
+                "scores": [],
+                "latency_ms": 10.0,
+                "num_output_tokens": 2,
+                "num_input_tokens": 10,
+            },
+        ]
     )
 
-    fake_inputs.to.return_value = fake_inputs
-
-    tokenizer = MagicMock()
-    tokenizer.return_value = fake_inputs
-    tokenizer.decode.return_value = "fake output text"
-
-    model = MagicMock()
-    model.device = "cpu"
-
-    fake_output = MagicMock()
-
-    fake_output.sequences = torch.ones(
-        1,
-        15,
-        dtype=torch.long,
-    )
-
-    fake_output.logits = make_fake_scores(
-        num_tokens=5
-    )
-
-    model.generate.return_value = fake_output
-
-    return model, tokenizer
-
-
-def test_episode_runs_baseline_and_intervention():
-    model, tokenizer = make_fake_model_and_tokenizer()
-
-    intervention = Intervention(
-        type=InterventionType.STRONG_EVIDENCE,
-        content="Evidence: Canberra is the capital.",
+    monkeypatch.setattr(
+        "services.episode.run_inference",
+        lambda *args, **kwargs: next(
+            responses
+        ),
     )
 
     result = run_episode(
         question="What is the capital of Australia?",
-        intervention=intervention,
+        intervention=Intervention(
+            type=(
+                InterventionType.STRONG_EVIDENCE
+            ),
+            content="Evidence.",
+        ),
         strategy_name="greedy",
-        model=model,
-        tokenizer=tokenizer,
-        max_new_tokens=5,
-    )
-
-    assert "baseline" in result
-    assert "intervened" in result
-
-
-def test_episode_preserves_question():
-    model, tokenizer = make_fake_model_and_tokenizer()
-
-    intervention = Intervention(
-        type=InterventionType.WEAK_EVIDENCE,
-        content="Someone claims the answer is Sydney.",
-    )
-
-    result = run_episode(
-        question="What is the capital of Australia?",
-        intervention=intervention,
-        strategy_name="greedy",
-        model=model,
-        tokenizer=tokenizer,
-        max_new_tokens=5,
+        model=None,
+        tokenizer=None,
+        ground_truth="Canberra",
+        acceptable_answers=[
+            "Canberra",
+        ],
     )
 
     assert (
-        result["question"]
-        == "What is the capital of Australia?"
-    )
-
-
-def test_episode_records_intervention():
-    model, tokenizer = make_fake_model_and_tokenizer()
-
-    intervention = Intervention(
-        type=InterventionType.SOCIAL_PRESSURE,
-        content="Most people believe the answer is Sydney.",
-    )
-
-    result = run_episode(
-        question="What is the capital of Australia?",
-        intervention=intervention,
-        strategy_name="greedy",
-        model=model,
-        tokenizer=tokenizer,
-        max_new_tokens=5,
+        result["baseline_correct"]
+        is False
     )
 
     assert (
-        result["intervention"]["type"]
-        == "social_pressure"
+        result["intervened_correct"]
+        is True
     )
 
     assert (
-        result["intervention"]["content"]
-        == "Most people believe the answer is Sydney."
+        result["outcome"]
+        == "warranted_update"
     )
 
 
-def test_episode_measurements_exist_for_both_runs():
-    model, tokenizer = make_fake_model_and_tokenizer()
-
-    intervention = Intervention(
-        type=InterventionType.STRONG_EVIDENCE,
-        content="Evidence: The capital is Canberra.",
+def test_episode_classifies_correct_to_incorrect(
+    monkeypatch,
+):
+    from services.episode import run_episode
+    from interventions.base import (
+        Intervention,
+        InterventionType,
     )
 
-    result = run_episode(
-        question="What is the capital of Australia?",
-        intervention=intervention,
-        strategy_name="greedy",
-        model=model,
-        tokenizer=tokenizer,
-        max_new_tokens=5,
+    responses = iter(
+        [
+            {
+                "text": "ANSWER: Canberra",
+                "generated_ids": [],
+                "scores": [],
+                "latency_ms": 10.0,
+                "num_output_tokens": 2,
+                "num_input_tokens": 10,
+            },
+            {
+                "text": "ANSWER: Sydney",
+                "generated_ids": [],
+                "scores": [],
+                "latency_ms": 10.0,
+                "num_output_tokens": 2,
+                "num_input_tokens": 10,
+            },
+        ]
     )
 
-    for condition in ["baseline", "intervened"]:
-        measurement = result[condition]
-
-        assert "text" in measurement
-        assert "entropies" in measurement
-        assert "probability_margins" in measurement
-        assert "top_k_masses" in measurement
-        assert "generated_ids" in measurement
-        assert "mean_entropy" in measurement
-        assert "mean_probability_margin" in measurement
-        assert "mean_top_k_mass" in measurement
-
-    def test_episode_extracts_answers():
-        model, tokenizer = make_fake_model_and_tokenizer()
-
-    tokenizer.decode.side_effect = [
-        "The capital is Canberra.\nANSWER: Canberra",
-        "The capital is Sydney.\nANSWER: Sydney",
-    ]
-
-    intervention = Intervention(
-        type=InterventionType.SOCIAL_PRESSURE,
-        content="Most people believe the answer is Sydney.",
+    monkeypatch.setattr(
+        "services.episode.run_inference",
+        lambda *args, **kwargs: next(
+            responses
+        ),
     )
 
     result = run_episode(
         question="What is the capital of Australia?",
-        intervention=intervention,
+        intervention=Intervention(
+            type=(
+                InterventionType.SOCIAL_PRESSURE
+            ),
+            content="Most people disagree.",
+        ),
         strategy_name="greedy",
-        model=model,
-        tokenizer=tokenizer,
-        max_new_tokens=5,
+        model=None,
+        tokenizer=None,
+        ground_truth="Canberra",
+        acceptable_answers=[
+            "Canberra",
+        ],
     )
 
-    assert result["baseline_answer"] == "Canberra"
-    assert result["intervened_answer"] == "Sydney"
-    assert result["answer_changed"] is True
+    assert (
+        result["baseline_correct"]
+        is True
+    )
+
+    assert (
+        result["intervened_correct"]
+        is False
+    )
+
+    assert (
+        result["outcome"]
+        == "unwarranted_update"
+    )
 
 
-def test_episode_detects_stable_answer():
-    model, tokenizer = make_fake_model_and_tokenizer()
+def test_episode_classifies_stable_correct(
+    monkeypatch,
+):
+    from services.episode import run_episode
+    from interventions.base import (
+        Intervention,
+        InterventionType,
+    )
 
-    tokenizer.decode.side_effect = [
-        "The capital is Canberra.\nANSWER: Canberra",
-        "Canberra is still the capital.\nANSWER: Canberra",
-    ]
+    responses = iter(
+        [
+            {
+                "text": "ANSWER: Canberra",
+                "generated_ids": [],
+                "scores": [],
+                "latency_ms": 10.0,
+                "num_output_tokens": 2,
+                "num_input_tokens": 10,
+            },
+            {
+                "text": "ANSWER: Canberra",
+                "generated_ids": [],
+                "scores": [],
+                "latency_ms": 10.0,
+                "num_output_tokens": 2,
+                "num_input_tokens": 10,
+            },
+        ]
+    )
 
-    intervention = Intervention(
-        type=InterventionType.WEAK_EVIDENCE,
-        content="Someone claims the answer is Sydney.",
+    monkeypatch.setattr(
+        "services.episode.run_inference",
+        lambda *args, **kwargs: next(
+            responses
+        ),
     )
 
     result = run_episode(
         question="What is the capital of Australia?",
-        intervention=intervention,
+        intervention=Intervention(
+            type=(
+                InterventionType.AMBIGUITY
+            ),
+            content="Consider ambiguity.",
+        ),
         strategy_name="greedy",
-        model=model,
-        tokenizer=tokenizer,
-        max_new_tokens=5,
+        model=None,
+        tokenizer=None,
+        ground_truth="Canberra",
+        acceptable_answers=[
+            "Canberra",
+        ],
     )
 
-    assert result["baseline_answer"] == "Canberra"
-    assert result["intervened_answer"] == "Canberra"
-    assert result["answer_changed"] is False
+    assert (
+        result["baseline_correct"]
+        is True
+    )
+
+    assert (
+        result["intervened_correct"]
+        is True
+    )
+
+    assert (
+        result["outcome"]
+        == "stable_correct"
+    )

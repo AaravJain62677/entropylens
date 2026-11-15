@@ -3,6 +3,7 @@ from enum import Enum
 
 
 class InterventionType(str, Enum):
+    CONTROL = "control"
     NONE = "none"
     STRONG_EVIDENCE = "strong_evidence"
     WEAK_EVIDENCE = "weak_evidence"
@@ -18,13 +19,15 @@ class Intervention:
 
     def apply(self, prompt: str) -> str:
         """
-        Apply the intervention to an existing prompt.
+        Apply an intervention to an existing prompt.
 
-        The original question is preserved and the intervention
-        is appended to the prompt.
+        Control/none conditions leave the prompt unchanged.
         """
 
-        if self.type == InterventionType.NONE:
+        if self.type in {
+            InterventionType.CONTROL,
+            InterventionType.NONE,
+        }:
             return prompt
 
         return (
