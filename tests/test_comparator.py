@@ -52,8 +52,20 @@ def test_comparator_result_has_required_keys():
         max_new_tokens=5,
     )
     result = results["greedy"]
-    for key in ["text", "entropies", "mean_entropy", "latency", "repetition_rate",
-                "num_input_tokens", "num_output_tokens"]:
+    for key in [
+    "text",
+    "entropies",
+    "mean_entropy",
+    "probability_margins",
+    "mean_probability_margin",
+    "top_k_masses",
+    "mean_top_k_mass",
+    "generated_ids",
+    "latency",
+    "repetition_rate",
+    "num_input_tokens",
+    "num_output_tokens",
+]:
         assert key in result, f"Missing key: {key}"
 
 
@@ -80,3 +92,60 @@ def test_comparator_entropies_length_matches_output_tokens():
     )
     result = results["greedy"]
     assert len(result["entropies"]) == result["num_output_tokens"]
+
+    def test_comparator_probability_margins_match_output_tokens():
+        model, tokenizer = make_fake_model_and_tokenizer()
+
+    results = run_comparison(
+        prompt="Test prompt",
+        strategies_to_run=["greedy"],
+        model=model,
+        tokenizer=tokenizer,
+        max_new_tokens=5,
+    )
+
+    result = results["greedy"]
+
+    assert len(
+        result["probability_margins"]
+    ) == result["num_output_tokens"]
+
+
+def test_comparator_top_k_masses_match_output_tokens():
+    model, tokenizer = make_fake_model_and_tokenizer()
+
+    results = run_comparison(
+        prompt="Test prompt",
+        strategies_to_run=["greedy"],
+        model=model,
+        tokenizer=tokenizer,
+        max_new_tokens=5,
+    )
+
+    result = results["greedy"]
+
+    assert len(
+        result["top_k_masses"]
+    ) == result["num_output_tokens"]
+
+
+def test_comparator_signal_ranges():
+    model, tokenizer = make_fake_model_and_tokenizer()
+
+    results = run_comparison(
+        prompt="Test prompt",
+        strategies_to_run=["greedy"],
+        model=model,
+        tokenizer=tokenizer,
+        max_new_tokens=5,
+    )
+
+    result = results["greedy"]
+
+    assert result[
+        "mean_probability_margin"
+    ] >= 0.0
+
+    assert 0.0 <= result[
+        "mean_top_k_mass"
+    ] <= 1.0
