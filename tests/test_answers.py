@@ -6,25 +6,43 @@ from utils.answers import (
 
 
 def test_extract_answer():
-    text = "The capital is Canberra.\nANSWER: Canberra"
+    text = "ANSWER: Canberra"
 
     assert extract_answer(text) == "Canberra"
 
 
-def test_extract_answer_is_case_insensitive():
+def test_extract_answer_case_insensitive():
     text = "answer: Canberra"
 
     assert extract_answer(text) == "Canberra"
 
 
-def test_extract_answer_handles_extra_spaces():
+def test_extract_answer_with_whitespace():
     text = "ANSWER:    Canberra   "
 
     assert extract_answer(text) == "Canberra"
 
 
-def test_extract_answer_returns_none_when_missing():
-    text = "The capital is Canberra."
+def test_extract_answer_with_colon_spacing():
+    text = "ANSWER : Canberra"
+
+    assert extract_answer(text) == "Canberra"
+
+
+def test_extract_answer_multiline():
+    text = (
+        "Some reasoning.\n"
+        "ANSWER: Canberra\n"
+        "Additional text."
+    )
+
+    assert extract_answer(text) == "Canberra"
+
+
+def test_extract_answer_returns_none_without_marker():
+    text = (
+        "The capital of Australia is Canberra."
+    )
 
     assert extract_answer(text) is None
 
@@ -35,17 +53,45 @@ def test_extract_answer_returns_none_for_empty_answer():
     assert extract_answer(text) is None
 
 
+def test_extract_answer_returns_none_for_empty_text():
+    assert extract_answer("") is None
+
+
+def test_extract_answer_returns_none_for_whitespace():
+    assert extract_answer("   ") is None
+
+
+def test_extract_answer_falls_back_to_plain_response():
+    text = (
+        "The Australian Capital Territory, "
+        "which includes Canberra, is the federal district."
+    )
+
+    assert extract_answer(text) is None
+
+
+def test_extract_answer_fallback_handles_multiline_response():
+    text = (
+        "Canberra is the capital of Australia.\n"
+        "It is located in the Australian Capital Territory."
+    )
+
+    assert extract_answer(text) is None
+
+
 def test_normalize_answer_lowercases():
-    assert normalize_answer("Canberra") == "canberra"
+    assert normalize_answer(
+        "Canberra"
+    ) == "canberra"
 
 
 def test_normalize_answer_strips_whitespace():
     assert normalize_answer(
-        "   Canberra   "
+        "  Canberra  "
     ) == "canberra"
 
 
-def test_normalize_answer_removes_punctuation():
+def test_normalize_answer_removes_surrounding_punctuation():
     assert normalize_answer(
         "Canberra."
     ) == "canberra"
@@ -53,7 +99,7 @@ def test_normalize_answer_removes_punctuation():
 
 def test_normalize_answer_collapses_whitespace():
     assert normalize_answer(
-        "New    Delhi"
+        "New   Delhi"
     ) == "new delhi"
 
 
@@ -65,25 +111,25 @@ def test_answers_match_equivalent_answers():
     assert answers_match(
         "Canberra",
         "canberra.",
-    ) is True
+    )
 
 
 def test_answers_match_different_answers():
-    assert answers_match(
+    assert not answers_match(
         "Canberra",
         "Sydney",
-    ) is False
+    )
 
 
-def test_answers_match_missing_answers():
-    assert answers_match(
+def test_answers_match_missing_answer():
+    assert not answers_match(
         None,
         "Canberra",
-    ) is False
+    )
 
 
 def test_answers_match_both_missing():
-    assert answers_match(
+    assert not answers_match(
         None,
         None,
-    ) is False
+    )

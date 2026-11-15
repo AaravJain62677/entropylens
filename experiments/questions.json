@@ -1,0 +1,122 @@
+[
+  {
+    "id": "q001",
+    "category": "factual",
+    "question": "What is the capital of Australia?",
+    "answer": "Canberra"
+  },
+  {
+    "id": "q002",
+    "category": "factual",
+    "question": "What is the largest planet in our solar system?",
+    "answer": "Jupiter"
+  },
+  {
+    "id": "q003",
+    "category": "factual",
+    "question": "Who wrote the novel 1984?",
+    "answer": "George Orwell"
+  },
+  {
+    "id": "q004",
+    "category": "factual",
+    "question": "What is the chemical symbol for gold?",
+    "answer": "Au"
+  },
+  {
+    "id": "q005",
+    "category": "factual",
+    "question": "How many continents are there on Earth?",
+    "answer": "7"
+  },
+  {
+    "id": "q006",
+    "category": "science",
+    "question": "What force pulls objects toward the center of the Earth?",
+    "answer": "Gravity"
+  },
+  {
+    "id": "q007",
+    "category": "science",
+    "question": "What gas do plants primarily absorb during photosynthesis?",
+    "answer": "Carbon dioxide"
+  },
+  {
+    "id": "q008",
+    "category": "science",
+    "question": "What is the boiling point of water at standard atmospheric pressure in degrees Celsius?",
+    "answer": "100"
+  },
+  {
+    "id": "q009",
+    "category": "science",
+    "question": "What is the basic unit of life?",
+    "answer": "Cell"
+  },
+  {
+    "id": "q010",
+    "category": "science",
+    "question": "Which organ pumps blood throughout the human body?",
+    "answer": "Heart"
+  },
+  {
+    "id": "q011",
+    "category": "mathematics",
+    "question": "What is 15 multiplied by 6?",
+    "answer": "90"
+  },
+  {
+    "id": "q012",
+    "category": "mathematics",
+    "question": "What is the square root of 144?",
+    "answer": "12"
+  },
+  {
+    "id": "q013",
+    "category": "mathematics",
+    "question": "What is 25 percent of 200?",
+    "answer": "50"
+  },
+  {
+    "id": "q014",
+    "category": "mathematics",
+    "question": "What is 7 squared?",
+    "answer": "49"
+  },
+  {
+    "id": "q015",
+    "category": "mathematics",
+    "question": "If x + 8 = 15, what is x?",
+    "answer": "7"
+  },
+  {
+    "id": "q016",
+    "category": "logic",
+    "question": "If all roses are flowers and some flowers are red, can we conclude that some roses are red?",
+    "answer": "No"
+  },
+  {
+    "id": "q017",
+    "category": "logic",
+    "question": "If A is greater than B and B is greater than C, is A greater than C?",
+    "answer": "Yes"
+  },
+  {
+    "id": "q018",
+    "category": "logic",
+    "question": "A train leaves at 10:00 and arrives at 12:30. How long is the journey?",
+    "answer": "2 hours 30 minutes"
+  },
+  {
+    "id": "q019",
+    "category": "logic",
+    "question": "If there are 3 apples and you take away 2, how many apples do you have?",
+    "answer": "2"
+  },
+  {
+    "id": "q020",
+    "category": "logic",
+    "question": "If today is Monday, what day will it be three days from now?",
+    "answer": "Thursday"
+  }
+]
